@@ -137,15 +137,16 @@ export const VaccinationRecords = ({
             borderRadius: '8px',
           }}
         >
-          <h3 style={{ marginTop: 0 }}>Add Vaccination Record</h3>
+          <h3 style={{ marginTop: 0, color: "black" }}>Add Vaccination Record</h3>
 
-          <div style={{ marginBottom: '12px' }}>
+          <div style={{ marginBottom: '12px', color: '#000000' }}>
             <label
               style={{
                 display: 'block',
                 marginBottom: '4px',
                 fontSize: '14px',
                 fontWeight: 'bold',
+                color: '#000000',
               }}
             >
               Vaccine Name *
@@ -183,6 +184,7 @@ export const VaccinationRecords = ({
                   marginBottom: '4px',
                   fontSize: '14px',
                   fontWeight: 'bold',
+                  color: '#000000',
                 }}
               >
                 Date Administered *
@@ -211,6 +213,7 @@ export const VaccinationRecords = ({
                   marginBottom: '4px',
                   fontSize: '14px',
                   fontWeight: 'bold',
+                  color: '#000000',
                 }}
               >
                 Next Dose Date (if applicable)
@@ -248,6 +251,7 @@ export const VaccinationRecords = ({
                   marginBottom: '4px',
                   fontSize: '14px',
                   fontWeight: 'bold',
+                  color: '#000000',
                 }}
               >
                 Lot Number
@@ -275,6 +279,7 @@ export const VaccinationRecords = ({
                   marginBottom: '4px',
                   fontSize: '14px',
                   fontWeight: 'bold',
+                  color: '#000000',
                 }}
               >
                 Location/Clinic
@@ -304,6 +309,7 @@ export const VaccinationRecords = ({
                 marginBottom: '4px',
                 fontSize: '14px',
                 fontWeight: 'bold',
+                color: '#000000',
               }}
             >
               Notes
