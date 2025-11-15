@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import GlobeGL from 'react-globe.gl';
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { FlightPath, Location } from '../types';
 
 interface GlobeProps {
@@ -14,6 +15,28 @@ export const Globe = ({ flightPaths, userLocation, destination, onGlobeReady }: 
   const globeEl = useRef<any>(null);
   const [globeReady, setGlobeReady] = useState(false);
   const [animationProgress, setAnimationProgress] = useState(0);
+  const [airplaneModel, setAirplaneModel] = useState<THREE.Group | null>(null);
+
+  // Load the airplane GLTF model
+  useEffect(() => {
+    const loader = new GLTFLoader();
+    loader.load(
+      '/AirplaneForFreeobj.glb',
+      (gltf) => {
+        const model = gltf.scene;
+        // Scale and adjust the model
+        model.scale.set(0.5, 0.5, 0.5); // Adjust scale as needed
+        setAirplaneModel(model);
+        console.log('✈️ Airplane model loaded successfully');
+      },
+      (progress) => {
+        console.log(`Loading airplane model: ${(progress.loaded / progress.total * 100).toFixed(2)}%`);
+      },
+      (error) => {
+        console.error('Error loading airplane model:', error);
+      }
+    );
+  }, []);
 
   useEffect(() => {
     if (globeEl.current) {
@@ -182,45 +205,55 @@ export const Globe = ({ flightPaths, userLocation, destination, onGlobeReady }: 
       objectLng="lng"
       objectAltitude="altitude"
       objectThreeObject={() => {
-        // Create a simple plane geometry (much larger and more visible)
-        const planeGroup = new THREE.Group();
+        if (airplaneModel) {
+          // Clone the loaded GLTF model for each instance
+          const clonedModel = airplaneModel.clone();
 
-        // Main body (fuselage)
-        const bodyGeometry = new THREE.CylinderGeometry(0.8, 0.8, 4, 8);
-        const bodyMaterial = new THREE.MeshLambertMaterial({
-          color: '#ffffff',
-          emissive: '#4fc3f7',
-          emissiveIntensity: 0.3
-        });
-        const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-        body.rotation.z = Math.PI / 2;
-        planeGroup.add(body);
+          // Rotate the model to face the right direction
+          clonedModel.rotation.set(0, Math.PI / 2, 0);
 
-        // Nose cone
-        const noseGeometry = new THREE.ConeGeometry(0.8, 1.5, 8);
-        const nose = new THREE.Mesh(noseGeometry, bodyMaterial);
-        nose.rotation.z = -Math.PI / 2;
-        nose.position.x = 2.75;
-        planeGroup.add(nose);
+          return clonedModel;
+        } else {
+          // Fallback: Create a simple plane geometry while model is loading
+          const planeGroup = new THREE.Group();
 
-        // Wings
-        const wingGeometry = new THREE.BoxGeometry(0.3, 8, 1.5);
-        const wingMaterial = new THREE.MeshLambertMaterial({
-          color: '#e0e0e0',
-          emissive: '#4fc3f7',
-          emissiveIntensity: 0.2
-        });
-        const wings = new THREE.Mesh(wingGeometry, wingMaterial);
-        planeGroup.add(wings);
+          // Main body (fuselage)
+          const bodyGeometry = new THREE.CylinderGeometry(0.8, 0.8, 4, 8);
+          const bodyMaterial = new THREE.MeshLambertMaterial({
+            color: '#ffffff',
+            emissive: '#4fc3f7',
+            emissiveIntensity: 0.3
+          });
+          const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+          body.rotation.z = Math.PI / 2;
+          planeGroup.add(body);
 
-        // Tail fin
-        const tailGeometry = new THREE.BoxGeometry(0.3, 1.5, 2);
-        const tail = new THREE.Mesh(tailGeometry, wingMaterial);
-        tail.position.x = -2;
-        tail.position.z = 0.5;
-        planeGroup.add(tail);
+          // Nose cone
+          const noseGeometry = new THREE.ConeGeometry(0.8, 1.5, 8);
+          const nose = new THREE.Mesh(noseGeometry, bodyMaterial);
+          nose.rotation.z = -Math.PI / 2;
+          nose.position.x = 2.75;
+          planeGroup.add(nose);
 
-        return planeGroup;
+          // Wings
+          const wingGeometry = new THREE.BoxGeometry(0.3, 8, 1.5);
+          const wingMaterial = new THREE.MeshLambertMaterial({
+            color: '#e0e0e0',
+            emissive: '#4fc3f7',
+            emissiveIntensity: 0.2
+          });
+          const wings = new THREE.Mesh(wingGeometry, wingMaterial);
+          planeGroup.add(wings);
+
+          // Tail fin
+          const tailGeometry = new THREE.BoxGeometry(0.3, 1.5, 2);
+          const tail = new THREE.Mesh(tailGeometry, wingMaterial);
+          tail.position.x = -2;
+          tail.position.z = 0.5;
+          planeGroup.add(tail);
+
+          return planeGroup;
+        }
       }}
 
       // Atmosphere
