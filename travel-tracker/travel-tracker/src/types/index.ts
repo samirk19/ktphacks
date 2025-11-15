@@ -70,4 +70,6 @@ export interface CountryHealthInfo {
   malariaRisk: boolean;
   yellowFeverRequired: boolean;
   covidRequirements?: string;
+  dataSource: 'mock' | 'api' | 'fallback'; // Indicates if data is from mock data, real API, or fallback
+  lastUpdated?: Date; // When the data was last updated
 }
