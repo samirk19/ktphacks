@@ -1,35 +1,126 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import HomeScreen from './components/HomeScreen';
+import ScoreHeader from './components/ScoreHeader';
+import EmailDisplay from './components/EmailDisplay';
+import ActionButtons from './components/ActionButtons';
+import FeedbackOverlay from './components/FeedbackOverlay';
+import ResultsScreen from './components/ResultsScreen';
+import { GameState, GameStats, Email } from './types';
+import { emailData } from './data/emails';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [gameState, setGameState] = useState<GameState>('home');
+  const [currentEmailIndex, setCurrentEmailIndex] = useState(0);
+  const [shuffledEmails, setShuffledEmails] = useState<Email[]>([]);
+  const [stats, setStats] = useState<GameStats>({
+    score: 0,
+    correct: 0,
+    incorrect: 0,
+    totalAnswered: 0
+  });
+  const [userChoice, setUserChoice] = useState<'safe' | 'phishing' | null>(null);
+  const [isCorrect, setIsCorrect] = useState(false);
+
+  // Shuffle emails when game starts
+  const shuffleEmails = (emails: Email[]) => {
+    const shuffled = [...emails];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  const startGame = () => {
+    setShuffledEmails(shuffleEmails(emailData));
+    setCurrentEmailIndex(0);
+    setStats({
+      score: 0,
+      correct: 0,
+      incorrect: 0,
+      totalAnswered: 0
+    });
+    setGameState('playing');
+  };
+
+  const handleAnswer = (choice: 'safe' | 'phishing') => {
+    const currentEmail = shuffledEmails[currentEmailIndex];
+    const correctAnswer = currentEmail.isPhishing ? 'phishing' : 'safe';
+    const correct = choice === correctAnswer;
+
+    setUserChoice(choice);
+    setIsCorrect(correct);
+
+    // Update stats
+    setStats(prev => ({
+      score: prev.score + (correct ? 10 : -5),
+      correct: prev.correct + (correct ? 1 : 0),
+      incorrect: prev.incorrect + (correct ? 0 : 1),
+      totalAnswered: prev.totalAnswered + 1
+    }));
+
+    setGameState('feedback');
+  };
+
+  const handleNext = () => {
+    if (currentEmailIndex < shuffledEmails.length - 1) {
+      setCurrentEmailIndex(prev => prev + 1);
+      setUserChoice(null);
+      setGameState('playing');
+    } else {
+      setGameState('results');
+    }
+  };
+
+  const handlePlayAgain = () => {
+    startGame();
+  };
+
+  const currentEmail = shuffledEmails[currentEmailIndex];
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="app">
+      {gameState === 'home' && (
+        <HomeScreen onStartGame={startGame} />
+      )}
+
+      {(gameState === 'playing' || gameState === 'feedback') && currentEmail && (
+        <div className="game-screen">
+          <ScoreHeader
+            score={stats.score}
+            currentEmail={currentEmailIndex + 1}
+            totalEmails={shuffledEmails.length}
+          />
+
+          <EmailDisplay email={currentEmail} />
+
+          <ActionButtons
+            onSafe={() => handleAnswer('safe')}
+            onPhishing={() => handleAnswer('phishing')}
+            disabled={gameState === 'feedback'}
+          />
+
+          {gameState === 'feedback' && userChoice && (
+            <FeedbackOverlay
+              email={currentEmail}
+              isCorrect={isCorrect}
+              userChoice={userChoice}
+              onNext={handleNext}
+            />
+          )}
+        </div>
+      )}
+
+      {gameState === 'results' && (
+        <ResultsScreen
+          stats={stats}
+          totalEmails={shuffledEmails.length}
+          onPlayAgain={handlePlayAgain}
+        />
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;

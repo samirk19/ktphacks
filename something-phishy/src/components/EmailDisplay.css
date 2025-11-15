@@ -1,0 +1,90 @@
+.email-display {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+}
+
+.email-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.email-header {
+  background: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
+  padding: 1.5rem 2rem;
+}
+
+.email-field {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.email-field:last-child {
+  margin-bottom: 0;
+}
+
+.field-label {
+  font-weight: 600;
+  color: #6b7280;
+  min-width: 80px;
+}
+
+.field-value {
+  color: #111827;
+  flex: 1;
+  word-break: break-all;
+}
+
+.field-value.subject {
+  font-weight: 600;
+}
+
+.email-body {
+  padding: 2rem;
+  line-height: 1.8;
+  color: #374151;
+  white-space: pre-wrap;
+  font-size: 1rem;
+  min-height: 200px;
+}
+
+.email-note {
+  background: #dbeafe;
+  border-top: 2px solid #3b82f6;
+  padding: 1rem 2rem;
+}
+
+.email-note p {
+  margin: 0;
+  color: #1e40af;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .email-display {
+    padding: 0 1rem;
+    margin: 1rem auto;
+  }
+
+  .email-header {
+    padding: 1rem;
+  }
+
+  .email-field {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .email-body {
+    padding: 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .email-note {
+    padding: 1rem;
+  }
+}
