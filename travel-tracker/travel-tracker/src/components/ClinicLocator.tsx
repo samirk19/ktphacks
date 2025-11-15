@@ -57,30 +57,35 @@ export const ClinicLocator = ({ userLocation }: ClinicLocatorProps) => {
     // Simulate API call
     setTimeout(() => {
       // Filter clinics by radius
-      const filtered = MOCK_CLINICS.filter(clinic =>
-        (clinic.distance || 0) <= searchRadius
+      const filtered = MOCK_CLINICS.filter(
+        (clinic) => (clinic.distance || 0) <= searchRadius
       );
       setClinics(filtered);
       setIsLoading(false);
     }, 1000);
-
-    // In a real implementation, you would call Google Maps Places API:
-    // const service = new google.maps.places.PlacesService(map);
-    // service.nearbySearch({
-    //   location: new google.maps.LatLng(userLocation.lat, userLocation.lng),
-    //   radius: searchRadius * 1000,
-    //   type: 'doctor',
-    //   keyword: 'travel vaccination clinic'
-    // }, callback);
   };
 
   return (
-    <div style={{ padding: '20px', backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+    <div
+      style={{
+        padding: '20px',
+        backgroundColor: 'white',
+        borderRadius: '12px',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+      }}
+    >
       <h2 style={{ marginTop: 0, color: '#333' }}>Find Travel Clinics Nearby</h2>
 
       <div style={{ marginBottom: '20px' }}>
         <div style={{ marginBottom: '12px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>
+          <label
+            style={{
+              display: 'block',
+              marginBottom: '8px',
+              fontSize: '14px',
+              fontWeight: 'bold',
+            }}
+          >
             Search Radius: {searchRadius} km
           </label>
           <input
@@ -94,7 +99,13 @@ export const ClinicLocator = ({ userLocation }: ClinicLocatorProps) => {
         </div>
 
         {userLocation && (
-          <p style={{ fontSize: '14px', color: '#666', marginBottom: '12px' }}>
+          <p
+            style={{
+              fontSize: '14px',
+              color: '#666',
+              marginBottom: '12px',
+            }}
+          >
             📍 Searching near: {userLocation.name}, {userLocation.country}
           </p>
         )}
@@ -112,6 +123,17 @@ export const ClinicLocator = ({ userLocation }: ClinicLocatorProps) => {
             opacity: isLoading || !userLocation ? 0.6 : 1,
             fontSize: '16px',
             width: '100%',
+            transform: 'scale(1)',
+            transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+          }}
+          onMouseEnter={(e) => {
+            if (isLoading || !userLocation) return;
+            e.currentTarget.style.transform = 'scale(1.05)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.boxShadow = 'none';
           }}
         >
           {isLoading ? 'Searching...' : 'Find Clinics'}
@@ -123,7 +145,7 @@ export const ClinicLocator = ({ userLocation }: ClinicLocatorProps) => {
           <h3 style={{ color: '#1976d2', marginBottom: '16px' }}>
             Found {clinics.length} clinic{clinics.length !== 1 ? 's' : ''}
           </h3>
-          {clinics.map(clinic => (
+          {clinics.map((clinic) => (
             <div
               key={clinic.id}
               style={{
@@ -134,22 +156,37 @@ export const ClinicLocator = ({ userLocation }: ClinicLocatorProps) => {
                 backgroundColor: '#fafafa',
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                }}
+              >
                 <div style={{ flex: 1 }}>
-                  <h4 style={{ margin: '0 0 8px 0', color: '#333' }}>{clinic.name}</h4>
-                  <div style={{ fontSize: '14px', color: '#666', lineHeight: '1.6' }}>
-                    <p style={{ margin: '4px 0' }}>
-                      📍 {clinic.address}
-                    </p>
+                  <h4
+                    style={{
+                      margin: '0 0 8px 0',
+                      color: '#333',
+                    }}
+                  >
+                    {clinic.name}
+                  </h4>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: '#666',
+                      lineHeight: '1.6',
+                    }}
+                  >
+                    <p style={{ margin: '4px 0' }}>📍 {clinic.address}</p>
                     {clinic.distance && (
                       <p style={{ margin: '4px 0' }}>
                         🚶 {clinic.distance.toFixed(1)} km away
                       </p>
                     )}
                     {clinic.phone && (
-                      <p style={{ margin: '4px 0' }}>
-                        📞 {clinic.phone}
-                      </p>
+                      <p style={{ margin: '4px 0' }}>📞 {clinic.phone}</p>
                     )}
                     {clinic.rating && (
                       <p style={{ margin: '4px 0' }}>
@@ -158,7 +195,13 @@ export const ClinicLocator = ({ userLocation }: ClinicLocatorProps) => {
                     )}
                   </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px',
+                  }}
+                >
                   {clinic.website && (
                     <a
                       href={clinic.website}
@@ -172,6 +215,19 @@ export const ClinicLocator = ({ userLocation }: ClinicLocatorProps) => {
                         borderRadius: '6px',
                         textAlign: 'center',
                         fontSize: '14px',
+                        display: 'inline-block',
+                        transform: 'scale(1)',
+                        transition:
+                          'transform 0.15s ease, box-shadow 0.15s ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.05)';
+                        e.currentTarget.style.boxShadow =
+                          '0 4px 10px rgba(0,0,0,0.12)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                        e.currentTarget.style.boxShadow = 'none';
                       }}
                     >
                       Website
@@ -189,6 +245,19 @@ export const ClinicLocator = ({ userLocation }: ClinicLocatorProps) => {
                       borderRadius: '6px',
                       textAlign: 'center',
                       fontSize: '14px',
+                      display: 'inline-block',
+                      transform: 'scale(1)',
+                      transition:
+                        'transform 0.15s ease, box-shadow 0.15s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.05)';
+                      e.currentTarget.style.boxShadow =
+                        '0 4px 10px rgba(0,0,0,0.12)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'scale(1)';
+                      e.currentTarget.style.boxShadow = 'none';
                     }}
                   >
                     Directions
@@ -201,29 +270,35 @@ export const ClinicLocator = ({ userLocation }: ClinicLocatorProps) => {
       )}
 
       {!userLocation && (
-        <div style={{
-          padding: '16px',
-          backgroundColor: '#fff3cd',
-          border: '1px solid #ffc107',
-          borderRadius: '8px',
-          color: '#856404',
-        }}>
+        <div
+          style={{
+            padding: '16px',
+            backgroundColor: '#fff3cd',
+            border: '1px solid #ffc107',
+            borderRadius: '8px',
+            color: '#856404',
+          }}
+        >
           <p style={{ margin: 0 }}>
-            ⚠️ Location services are required to find nearby clinics. Please enable location access.
+            ⚠️ Location services are required to find nearby clinics. Please
+            enable location access.
           </p>
         </div>
       )}
 
-      <div style={{
-        marginTop: '20px',
-        padding: '12px',
-        backgroundColor: '#e3f2fd',
-        borderRadius: '8px',
-        fontSize: '13px',
-        color: '#1565c0',
-      }}>
-        💡 <strong>Note:</strong> This is a demonstration with mock data. In production, this would integrate with
-        Google Maps API or similar services to show real travel clinics in your area.
+      <div
+        style={{
+          marginTop: '20px',
+          padding: '12px',
+          backgroundColor: '#e3f2fd',
+          borderRadius: '8px',
+          fontSize: '13px',
+          color: '#1565c0',
+        }}
+      >
+        💡 <strong>Note:</strong> This is a demonstration with mock data. In
+        production, this would integrate with Google Maps API or similar
+        services to show real travel clinics in your area.
       </div>
     </div>
   );

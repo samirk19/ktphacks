@@ -87,8 +87,19 @@ export const DestinationSearch = ({ onDestinationSelect, disabled }: Destination
             color: 'white',
             border: 'none',
             borderRadius: '8px',
-            cursor: disabled || isLoading ? 'not-allowed' : 'pointer',
-            opacity: disabled || isLoading ? 0.6 : 1,
+            cursor: disabled || isLoading || !searchQuery.trim() ? 'not-allowed' : 'pointer',
+            opacity: disabled || isLoading || !searchQuery.trim() ? 0.6 : 1,
+            transform: 'scale(1)',
+            transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+          }}
+          onMouseEnter={(e) => {
+            if (disabled || isLoading || !searchQuery.trim()) return;
+            e.currentTarget.style.transform = 'scale(1.05)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.boxShadow = 'none';
           }}
         >
           {isLoading ? 'Searching...' : 'Search'}
