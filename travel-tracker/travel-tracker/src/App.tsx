@@ -222,6 +222,8 @@ function App() {
               <VaccinationInfo
                 vaccinations={healthInfo.vaccinations}
                 country={healthInfo.country}
+                dataSource={healthInfo.dataSource}
+                lastUpdated={healthInfo.lastUpdated}
               />
             ) : (
               <div style={{ padding: '40px', textAlign: 'center', backgroundColor: 'white', borderRadius: '12px' }}>
@@ -234,7 +236,12 @@ function App() {
 
           {activeTab === 'precautions' && (
             healthInfo ? (
-              <HealthPrecautions precautions={healthInfo.healthPrecautions} />
+              <HealthPrecautions
+                precautions={healthInfo.healthPrecautions}
+                country={healthInfo.country}
+                dataSource={healthInfo.dataSource}
+                lastUpdated={healthInfo.lastUpdated}
+              />
             ) : (
               <div style={{ padding: '40px', textAlign: 'center', backgroundColor: 'white', borderRadius: '12px' }}>
                 <p style={{ fontSize: '18px', color: '#666' }}>
