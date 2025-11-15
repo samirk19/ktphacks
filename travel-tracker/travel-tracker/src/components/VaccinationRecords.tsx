@@ -71,7 +71,7 @@ export const VaccinationRecords = ({
           marginBottom: '20px',
         }}
       >
-        <h2 style={{ margin: 0, color: '#333' }}>My Vaccination Records</h2>
+        <h2 style={{ margin: 0, color: 'black' }}>My Vaccination Records</h2>
         <div style={{ display: 'flex', gap: '10px' }}>
           <button
             onClick={onExport}
@@ -161,6 +161,8 @@ export const VaccinationRecords = ({
                 padding: '8px',
                 borderRadius: '4px',
                 border: '1px solid #ddd',
+                backgroundColor: 'white',
+                color: 'black',
               }}
               required
             />
@@ -196,6 +198,8 @@ export const VaccinationRecords = ({
                   padding: '8px',
                   borderRadius: '4px',
                   border: '1px solid #ddd',
+                  backgroundColor: 'white',
+                  color: 'black',
                 }}
                 required
               />
@@ -222,6 +226,8 @@ export const VaccinationRecords = ({
                   padding: '8px',
                   borderRadius: '4px',
                   border: '1px solid #ddd',
+                  backgroundColor: 'white',
+                  color: 'black',
                 }}
               />
             </div>
@@ -257,6 +263,8 @@ export const VaccinationRecords = ({
                   padding: '8px',
                   borderRadius: '4px',
                   border: '1px solid #ddd',
+                  backgroundColor: 'white',
+                  color: 'black',
                 }}
               />
             </div>
@@ -282,6 +290,8 @@ export const VaccinationRecords = ({
                   padding: '8px',
                   borderRadius: '4px',
                   border: '1px solid #ddd',
+                  backgroundColor: 'white',
+                  color: 'black',
                 }}
               />
             </div>
@@ -309,6 +319,8 @@ export const VaccinationRecords = ({
                 borderRadius: '4px',
                 border: '1px solid #ddd',
                 minHeight: '60px',
+                backgroundColor: 'white',
+                color: 'black',
               }}
             />
           </div>
@@ -364,7 +376,7 @@ export const VaccinationRecords = ({
                   <h3
                     style={{
                       margin: '0 0 8px 0',
-                      color: '#333',
+                      color: 'black',
                     }}
                   >
                     {record.vaccineName}
@@ -372,7 +384,7 @@ export const VaccinationRecords = ({
                   <div
                     style={{
                       fontSize: '14px',
-                      color: '#666',
+                      color: 'black',
                       lineHeight: '1.6',
                     }}
                   >
@@ -432,7 +444,7 @@ export const VaccinationRecords = ({
             </div>
           ))
         ) : (
-          <p style={{ color: '#666', fontStyle: 'italic' }}>
+          <p style={{ color: 'black', fontStyle: 'italic' }}>
             No vaccination records yet. Click &quot;Add Record&quot; to start
             tracking your vaccinations.
           </p>
