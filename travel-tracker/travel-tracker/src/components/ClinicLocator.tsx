@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { TravelClinic, Location } from '../types';
+import { searchTravelHealthFacilities } from '../services/placesService';
 
 interface ClinicLocatorProps {
   userLocation: Location | null;
@@ -9,42 +10,7 @@ export const ClinicLocator = ({ userLocation }: ClinicLocatorProps) => {
   const [searchRadius, setSearchRadius] = useState(10); // km
   const [clinics, setClinics] = useState<TravelClinic[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-
-  // Mock data for demonstration
-  const MOCK_CLINICS: TravelClinic[] = [
-    {
-      id: '1',
-      name: 'City Travel Health Clinic',
-      address: '123 Main Street',
-      lat: userLocation?.lat || 40.7128,
-      lng: userLocation?.lng || -74.0060,
-      phone: '(555) 123-4567',
-      website: 'https://example.com/clinic1',
-      rating: 4.5,
-      distance: 2.3,
-    },
-    {
-      id: '2',
-      name: 'International Vaccination Center',
-      address: '456 Health Avenue',
-      lat: (userLocation?.lat || 40.7128) + 0.01,
-      lng: (userLocation?.lng || -74.0060) + 0.01,
-      phone: '(555) 234-5678',
-      website: 'https://example.com/clinic2',
-      rating: 4.8,
-      distance: 5.7,
-    },
-    {
-      id: '3',
-      name: 'Global Health Travel Services',
-      address: '789 Wellness Boulevard',
-      lat: (userLocation?.lat || 40.7128) - 0.01,
-      lng: (userLocation?.lng || -74.0060) - 0.01,
-      phone: '(555) 345-6789',
-      rating: 4.2,
-      distance: 8.1,
-    },
-  ];
+  const [error, setError] = useState<string | null>(null);
 
   const handleSearch = async () => {
     if (!userLocation) {
@@ -53,16 +19,18 @@ export const ClinicLocator = ({ userLocation }: ClinicLocatorProps) => {
     }
 
     setIsLoading(true);
+    setError(null);
 
-    // Simulate API call
-    setTimeout(() => {
-      // Filter clinics by radius
-      const filtered = MOCK_CLINICS.filter(
-        (clinic) => (clinic.distance || 0) <= searchRadius
-      );
-      setClinics(filtered);
+    try {
+      // Use comprehensive search for travel health facilities
+      const results = await searchTravelHealthFacilities(userLocation, searchRadius);
+      setClinics(results);
+    } catch (err) {
+      console.error('Error searching for clinics:', err);
+      setError(err instanceof Error ? err.message : 'Failed to search for clinics');
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -269,6 +237,23 @@ export const ClinicLocator = ({ userLocation }: ClinicLocatorProps) => {
         </div>
       )}
 
+      {error && (
+        <div
+          style={{
+            padding: '16px',
+            backgroundColor: '#ffebee',
+            border: '1px solid #f44336',
+            borderRadius: '8px',
+            color: '#c62828',
+            marginTop: '12px',
+          }}
+        >
+          <p style={{ margin: 0 }}>
+            ❌ {error}
+          </p>
+        </div>
+      )}
+
       {!userLocation && (
         <div
           style={{
@@ -286,20 +271,20 @@ export const ClinicLocator = ({ userLocation }: ClinicLocatorProps) => {
         </div>
       )}
 
-      <div
-        style={{
-          marginTop: '20px',
-          padding: '12px',
-          backgroundColor: '#e3f2fd',
-          borderRadius: '8px',
-          fontSize: '13px',
-          color: '#1565c0',
-        }}
-      >
-        💡 <strong>Note:</strong> This is a demonstration with mock data. In
-        production, this would integrate with Google Maps API or similar
-        services to show real travel clinics in your area.
-      </div>
+      {clinics.length === 0 && !isLoading && !error && userLocation && (
+        <div
+          style={{
+            marginTop: '20px',
+            padding: '12px',
+            backgroundColor: '#e3f2fd',
+            borderRadius: '8px',
+            fontSize: '13px',
+            color: '#1565c0',
+          }}
+        >
+          💡 <strong>Tip:</strong> Click "Find Clinics" to search for travel clinics and vaccination centers near you using Google Places API.
+        </div>
+      )}
     </div>
   );
 };

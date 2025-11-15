@@ -47,7 +47,7 @@ export const searchTravelClinics = async (
         'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.location,places.internationalPhoneNumber,places.websiteUri,places.rating'
       },
       body: JSON.stringify({
-        includedTypes: ['hospital', 'doctor', 'health'],
+        includedTypes: ['hospital', 'wellness_center'],
         maxResultCount: 20,
         locationRestriction: {
           circle: {
@@ -197,6 +197,52 @@ export const searchClinics = async (
     });
   } catch (error) {
     console.error('Error in text search:', error);
+    throw error;
+  }
+};
+
+/**
+ * Comprehensive search for travel health facilities
+ * Searches for travel clinics, vaccination centers, and travel medicine
+ */
+export const searchTravelHealthFacilities = async (
+  location: Location,
+  radius: number = 50
+): Promise<TravelClinic[]> => {
+  console.log('searchTravelHealthFacilities called with:', { location, radius });
+
+  if (!GOOGLE_PLACES_API_KEY) {
+    throw new Error('Google Places API key is missing');
+  }
+
+  try {
+    // Search for multiple types of travel health facilities
+    const searchQueries = [
+      'travel clinic',
+      'vaccination center',
+      'travel medicine',
+      'immunization clinic'
+    ];
+
+    const searchPromises = searchQueries.map(query =>
+      searchClinics(query, location, radius).catch(err => {
+        console.warn(`Search failed for "${query}":`, err);
+        return []; // Return empty array if search fails
+      })
+    );
+
+    const results = await Promise.all(searchPromises);
+    const allClinics = results.flat();
+
+    // Deduplicate by ID
+    const uniqueClinics = allClinics.filter((clinic, index, self) =>
+      index === self.findIndex((c) => c.id === clinic.id)
+    );
+
+    // Sort by distance
+    return uniqueClinics.sort((a, b) => (a.distance || 0) - (b.distance || 0));
+  } catch (error) {
+    console.error('Error searching for travel health facilities:', error);
     throw error;
   }
 };
